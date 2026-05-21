@@ -512,6 +512,27 @@ export component SettingsList inherits VerticalLayout {
             }
 
             HeaderText {
+                text <=> Translations.settings_baktsiu_header_text;
+            }
+
+            HorizontalLayout {
+                spacing: 5px;
+                TextComponent {
+                    name <=> Translations.settings_baktsiu_executable_path_text;
+                    model <=> Settings.baktsiu_executable_path;
+                }
+                Button {
+                    height: SettingsSize.item_height;
+                    text <=> Translations.settings_baktsiu_browse_button_text;
+                    clicked => { Callabler.pick_baktsiu_executable(); }
+                }
+            }
+
+            HintText {
+                hint_text <=> Translations.settings_baktsiu_hint_text;
+            }
+
+            HeaderText {
                 text <=> Translations.settings_select_header_text;
             }
 

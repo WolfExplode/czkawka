@@ -2,6 +2,7 @@ import { CheckBox, ListView, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ColorPalette } from "color_palette.slint";
 import { SingleMainListModel, SortColumnMode } from "common.slint";
 import { Callabler } from "callabler.slint";
+import { Settings } from "settings.slint";
 import { FontSizes } from "fonts.slint";
 import { PopupContextMenu } from "popup_context_menu.slint";
 
@@ -336,6 +337,7 @@ export component SelectableTableView inherits Rectangle {
     }
 
     context_menu := PopupContextMenu {
+        open_in_baktsiu_enabled: Settings.baktsiu_executable_path != "";
         open_item() => {
             if (context_menu_row_idx != -1) {
                 Callabler.row_open_item_with_index(context_menu_row_idx);
@@ -344,6 +346,11 @@ export component SelectableTableView inherits Rectangle {
         open_parent() => {
             if (context_menu_row_idx != -1) {
                 Callabler.row_open_parent_item_with_index(context_menu_row_idx);
+            }
+        }
+        open_in_baktsiu() => {
+            if (context_menu_row_idx != -1) {
+                Callabler.row_open_in_baktsiu(context_menu_row_idx);
             }
         }
         remove_from_results() => {

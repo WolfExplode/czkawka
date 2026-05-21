@@ -3,8 +3,11 @@ import { ColorPalette } from "color_palette.slint";
 import { Translations } from "translations.slint";
 
 export component PopupContextMenu inherits Rectangle {
+    in property <bool> open_in_baktsiu_enabled: false;
+
     callback open_item();
     callback open_parent();
+    callback open_in_baktsiu();
     callback remove_from_results();
     callback remove_all_from_folder();
     callback remove_all_from_folder_recursive();
@@ -24,7 +27,7 @@ export component PopupContextMenu inherits Rectangle {
 
     popup_window := PopupWindow {
         width: popup_menu_width;
-        height: menu_item_height * 12 + divider_height * 4;
+        height: menu_item_height * 13 + divider_height * 4;
         close-policy: PopupClosePolicy.close-on-click-outside;
 
         Rectangle {
@@ -45,6 +48,12 @@ export component PopupContextMenu inherits Rectangle {
                     text: Translations.context_menu_open_parent_text;
                     height: menu_item_height;
                     clicked => { popup_window.close(); root.open_parent(); }
+                }
+                Button {
+                    text: Translations.context_menu_open_in_baktsiu_text;
+                    height: menu_item_height;
+                    enabled: root.open_in_baktsiu_enabled;
+                    clicked => { popup_window.close(); root.open_in_baktsiu(); }
                 }
 
                 Rectangle { height: divider_height; background: ColorPalette.popup_border_color.with_alpha(0.25); }

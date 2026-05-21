@@ -510,6 +510,11 @@ fn translate_items(app: &MainWindow) {
     translation.set_context_menu_copy_file_name_text(flk!("context_menu_copy_file_name_text").into());
     translation.set_context_menu_copy_parent_folder_path_text(flk!("context_menu_copy_parent_folder_path_text").into());
     translation.set_context_menu_copy_full_path_text(flk!("context_menu_copy_full_path_text").into());
+    translation.set_context_menu_open_in_baktsiu_text(flk!("context_menu_open_in_baktsiu_text").into());
+    translation.set_settings_baktsiu_header_text(flk!("settings_baktsiu_header_text").into());
+    translation.set_settings_baktsiu_executable_path_text(flk!("settings_baktsiu_executable_path_text").into());
+    translation.set_settings_baktsiu_browse_button_text(flk!("settings_baktsiu_browse_button_text").into());
+    translation.set_settings_baktsiu_hint_text(flk!("settings_baktsiu_hint_text").into());
 
     let tools_model: [(SharedString, ActiveTab); TOOLS_NUMBER] = [
         (flk!("tool_duplicate_files").into(), ActiveTab::DuplicateFiles),

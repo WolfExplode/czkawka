@@ -514,4 +514,19 @@ context_menu_exclude_item_text = Exclude Item
 context_menu_copy_file_name_text = Copy File Name
 context_menu_copy_parent_folder_path_text = Copy Parent Folder
 context_menu_copy_full_path_text = Copy Full Path
+context_menu_open_in_baktsiu_text = Open in Baktsiu
+
+settings_baktsiu_header_text = Baktsiu
+settings_baktsiu_executable_path_text = Baktsiu executable path
+settings_baktsiu_browse_button_text = Browse…
+settings_baktsiu_hint_text = Optional. Right-click a result row and choose "Open in Baktsiu" to compare files from the current group in side-by-side mode.
+
+baktsiu_error_executable_not_configured_title = Baktsiu not configured
+baktsiu_error_executable_not_configured_message = Set the path to baktsiu.exe in Settings before using "Open in Baktsiu".
+baktsiu_error_executable_not_found_title = Baktsiu not found
+baktsiu_error_executable_not_found_message = The configured Baktsiu executable does not exist: { $path }
+baktsiu_error_no_files_title = No files to open
+baktsiu_error_no_files_message = No existing files were found for this selection. Folders and missing files are skipped.
+baktsiu_error_launch_failed_title = Failed to start Baktsiu
+baktsiu_error_launch_failed_message = Could not launch Baktsiu: { $reason }
 

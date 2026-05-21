@@ -357,6 +357,9 @@ pub struct BasicSettings {
     pub select_show_except_shortest_path: bool,
     #[serde(default = "ttrue")]
     pub select_show_except_longest_path: bool,
+
+    #[serde(default)]
+    pub baktsiu_executable_path: String,
 }
 
 impl Default for BasicSettings {
