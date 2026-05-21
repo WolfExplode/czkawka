@@ -142,14 +142,16 @@ pub(crate) fn connect_row_selections(app: &MainWindow) {
 }
 
 mod opener {
-    use super::{Callabler, ComponentHandle, GuiState, MainWindow, Model, error};
+    use std::path::{Path, PathBuf};
+
+    use super::{Callabler, ComponentHandle, GuiState, MainWindow, Model, SingleMainListModel, error};
 
     pub(crate) fn connect_on_open_item(app: &MainWindow) {
         app.global::<Callabler>().on_open_item(move |path| {
             open_item_simple(path.as_str());
         });
         app.global::<Callabler>().on_open_parent(move |path| {
-            let Some(parent_path) = std::path::Path::new(&path).parent() else {
+            let Some(parent_path) = Path::new(path.as_str()).parent() else {
                 return error!("Failed to get parent path for \"{path}\"");
             };
             open_item_simple(&parent_path.to_string_lossy());
@@ -159,6 +161,44 @@ mod opener {
     fn open_item_simple(path_to_open: &str) {
         if let Err(e) = open::that(path_to_open) {
             error!("Failed to open file: {e}");
+        }
+    }
+
+    fn row_full_path(row: &SingleMainListModel, path_idx: usize, name_idx: usize) -> Option<PathBuf> {
+        let path = row.val_str.iter().nth(path_idx)?.to_string();
+        let name = row.val_str.iter().nth(name_idx)?.to_string();
+        match (path.is_empty(), name.is_empty()) {
+            (true, true) => None,
+            (true, false) => Some(PathBuf::from(&name)),
+            (false, true) => Some(PathBuf::from(&path)),
+            (false, false) => Some(Path::new(&path).join(name)),
+        }
+    }
+
+    fn reveal_in_parent_folder(full_path: &Path) {
+        #[cfg(target_os = "windows")]
+        {
+            use std::os::windows::process::CommandExt;
+            let path = full_path.display().to_string().replace('/', "\\");
+            // raw_arg bypasses Rust's own quoting so explorer.exe receives the
+            // argument verbatim: /select,"C:\path\to\file"
+            let cmdline = format!("/select,\"{path}\"");
+            if let Err(e) = std::process::Command::new("explorer.exe").raw_arg(&cmdline).spawn() {
+                error!("Failed to reveal file in Explorer: {e}");
+            }
+        }
+        #[cfg(target_os = "macos")]
+        {
+            if let Err(e) = std::process::Command::new("open").args(["-R", &full_path.to_string_lossy()]).spawn() {
+                error!("Failed to reveal file in Finder: {e}");
+            }
+        }
+        #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+        {
+            let Some(parent) = full_path.parent() else {
+                return error!("Failed to get parent path for \"{}\"", full_path.display());
+            };
+            open_item_simple(&parent.to_string_lossy());
         }
     }
 
@@ -207,8 +247,17 @@ mod opener {
         app.global::<Callabler>().on_row_open_parent_item_with_index(move |idx| {
             let app = a.upgrade().expect("Failed to upgrade app :(");
             let active_tab = app.global::<GuiState>().get_active_tab();
-
-            open_item(&app, &[active_tab.get_str_path_idx()], idx as usize);
+            let model = active_tab.get_tool_model(&app);
+            let model_data = model
+                .row_data(idx as usize)
+                .unwrap_or_else(|| panic!("Failed to get row data with id {idx}, with model {} items", model.row_count()));
+            if model_data.header_row {
+                return;
+            }
+            let Some(full_path) = row_full_path(&model_data, active_tab.get_str_path_idx(), active_tab.get_str_name_idx()) else {
+                return error!("Failed to build full path for row {idx}");
+            };
+            reveal_in_parent_folder(&full_path);
         });
     }
 }
