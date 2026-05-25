@@ -168,7 +168,7 @@ fn build_ui(application: &Application, cli_args: Option<&CliResult>, needs_to_op
 
     let window_main = gui_data.window_main.clone();
     let taskbar_state = gui_data.taskbar_state.clone();
-    let used_additional_arguments = cli_args.is_some();
+    let used_additional_arguments = cli_args.is_some_and(|c| c.has_folder_arguments());
 
     // Show Krokiet info dialog if needed
     if needs_to_open_dialog_about_krokiet {

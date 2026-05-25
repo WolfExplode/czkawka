@@ -700,7 +700,7 @@ pub fn load_configuration(
     loader.open_and_read_content(text_view_errors, manual_execution);
 
     // Determine folders from CLI args (if any)
-    let set_start_folders = cli_result.is_some();
+    let set_start_folders = cli_result.is_some_and(|c| c.has_folder_arguments());
 
     // Loaded settings (from file or defaults)
     let loaded_settings = loader.settings_mut();

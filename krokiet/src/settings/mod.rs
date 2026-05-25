@@ -120,7 +120,11 @@ pub(crate) fn load_initial_settings_from_file(cli_result: Option<&CliResult>) ->
         BasicSettings::default()
     };
 
-    let preset_to_load = if cli_result.is_some() { RESERVER_PRESET_IDX } else { base_settings.default_preset };
+    let preset_to_load = if cli_result.is_some_and(|c| c.has_folder_arguments()) {
+        RESERVER_PRESET_IDX
+    } else {
+        base_settings.default_preset
+    };
 
     let mut custom_settings = load_data_from_file::<SettingsCustom>(get_config_file(preset_to_load)).unwrap_or_else(|e| {
         error!("Cannot load custom settings for preset {preset_to_load} - {e}, using default instead");

@@ -138,7 +138,10 @@ fn main() {
     set_initial_scroll_list_data_indexes(&app);
 
     let original_preset_idx = base_settings.default_preset;
-    set_initial_settings_to_gui(&app, &base_settings, &custom_settings, cli_args, preset_to_load);
+    set_initial_settings_to_gui(&app, &base_settings, &custom_settings, cli_args.clone(), preset_to_load);
+    if cli_args.as_ref().is_some_and(|c| c.fullscreen) {
+        app.window().set_fullscreen(true);
+    }
     update_available_hardware_encoders(&app);
 
     connect_delete_button(&app, progress_sender.clone(), stop_flag.clone());
