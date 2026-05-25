@@ -139,8 +139,13 @@ fn main() {
 
     let original_preset_idx = base_settings.default_preset;
     set_initial_settings_to_gui(&app, &base_settings, &custom_settings, cli_args.clone(), preset_to_load);
-    if cli_args.as_ref().is_some_and(|c| c.fullscreen) {
-        app.window().set_fullscreen(true);
+    if cli_args.as_ref().is_some_and(|c| c.maximized) {
+        let weak = app.as_weak();
+        let _ = slint::invoke_from_event_loop(move || {
+            if let Some(app) = weak.upgrade() {
+                app.window().set_maximized(true);
+            }
+        });
     }
     update_available_hardware_encoders(&app);
 

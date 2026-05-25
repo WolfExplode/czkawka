@@ -10,7 +10,7 @@ pub struct CliResult {
     pub included_items: Vec<String>,
     pub excluded_items: Vec<String>,
     pub referenced_items: Vec<String>,
-    pub fullscreen: bool,
+    pub maximized: bool,
 }
 
 impl CliResult {
@@ -42,14 +42,14 @@ pub fn process_cli_args(app_display: &str, app_exec: &str, args: Vec<String>) ->
         println!("  -r FOLDER, --referenced FOLDER   Include a folder and set it as referenced");
         println!("  --cache, -c           Opens the cache folder");
         println!("  --config, -C          Opens the config folder");
-        println!("  --fullscreen          Start in fullscreen mode (Krokiet)");
+        println!("  --maximize            Start with the window maximized (Krokiet)");
         println!("  --help, -h            Show this help message");
         println!("  --version, -v         Show version information");
         println!("Examples:");
         println!("  {app_exec} /path/absolute/to/folder -e relative_path/2 -r /path/to/referenced");
         println!("  {app_exec} . folder2 folder3");
-        println!("  {app_exec} --fullscreen");
-        println!("Without folder arguments, saved settings are used. --fullscreen applies only to Krokiet.");
+        println!("  {app_exec} --maximize");
+        println!("Without folder arguments, saved settings are used. --maximize applies only to Krokiet.");
         process::exit(0);
     }
     if ["--version", "-v"].iter().any(|&arg| args.contains(&arg.to_string())) {
@@ -69,7 +69,7 @@ pub fn process_cli_args(app_display: &str, app_exec: &str, args: Vec<String>) ->
         included_items: Vec::new(),
         excluded_items: Vec::new(),
         referenced_items: Vec::new(),
-        fullscreen: false,
+        maximized: false,
     };
     let mut errors = Vec::new();
 
@@ -102,7 +102,7 @@ pub fn process_cli_args(app_display: &str, app_exec: &str, args: Vec<String>) ->
                         process::exit(1);
                     }
                 }
-                "--fullscreen" | "--full-screen" => cli_result.fullscreen = true,
+                "--maximize" | "--maximized" => cli_result.maximized = true,
                 _ => {
                     eprintln!("Unknown option: {arg}");
                     process::exit(1);
@@ -141,7 +141,7 @@ pub fn process_cli_args(app_display: &str, app_exec: &str, args: Vec<String>) ->
         warn!("{error}");
     }
 
-    if !cli_result.has_folder_arguments() && !cli_result.fullscreen {
+    if !cli_result.has_folder_arguments() && !cli_result.maximized {
         None
     } else {
         Some(cli_result)
@@ -244,18 +244,18 @@ mod tests {
     }
 
     #[test]
-    fn processes_fullscreen_flag() {
-        let args = vec!["--fullscreen".to_string()];
+    fn processes_maximize_flag() {
+        let args = vec!["--maximize".to_string()];
         let result = process_cli_args("A", "B", args).expect("TEST");
-        assert!(result.fullscreen);
+        assert!(result.maximized);
         assert!(!result.has_folder_arguments());
     }
 
     #[test]
-    fn processes_fullscreen_with_folders() {
-        let args = vec!["--fullscreen".to_string(), "/valid/folder".to_string()];
+    fn processes_maximize_with_folders() {
+        let args = vec!["--maximize".to_string(), "/valid/folder".to_string()];
         let result = process_cli_args("A", "B", args).expect("TEST");
-        assert!(result.fullscreen);
+        assert!(result.maximized);
         assert_eq!(result.included_items, vec!["/valid/folder".to_string()]);
     }
 }
